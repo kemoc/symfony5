@@ -1,0 +1,90 @@
+version: '3'
+
+#env_file:
+#  - ./.env
+
+networks:
+    frontend:
+    backend:
+
+services:
+    nginx:
+        build: ./services/nginx/build/
+        restart: on-failure
+        #tty: true
+        ports:
+            - ${HOST_NGINX_PORT}:${NGINX_PORT}
+        environment:
+            - NGINX_HOST
+        volumes:
+            - ${API_PATH}:/var/www/project:ro
+            - ./services/nginx/etc/nginx/project:/etc/nginx/project
+            - ./services/nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - api
+        networks:
+            - frontend
+            - backend
+
+    api:
+        build: ./services/api/build/
+        #restart: on-failure
+        #image: php:${PHP_VER}
+        #mem_limit: 2g
+        #memswap_limit: 0
+        tty: true
+        #stdin_open: false
+        #ports:
+        #    - 21900:9000
+        volumes:
+            - ${API_PATH}:/var/www/project:rw
+            - ./services/api/usr/local/etc/php/conf.d/zz-php.ini:/usr/local/etc/php/conf.d/zz-php.ini
+            - ./services/api/usr/local/etc/php-fpm.d/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+        environment:
+        #    - VIRTUAL_PORT=80
+            - MYSQL_USER
+            - MYSQL_PASSWORD
+            - MYSQL_DATABASE
+            - MYSQL_HOST=mariadb
+        #links:
+        #    - mariadb
+        depends_on:
+            - mariadb
+        networks:
+            - backend
+
+    mariadb:
+        build: ./services/mariadb/build/
+        #image: mariadb:10.2.20
+        #tty: true
+        #stdin_open: false
+        ports:
+            - ${HOST_MARIADB_PORT}:3306
+        environment:
+            - MYSQL_ROOT_PASSWORD
+            - MYSQL_USER
+            - MYSQL_PASSWORD
+            - MYSQL_DATABASE
+            #- TERM=dumb
+        #volumes:
+        #    - ./volumes/mariadb/var/lib/mysql/:/var/lib/mysql/:rw
+        networks:
+            - backend
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - ${HOST_PHPMYADMIN_PORT}:80
+        links:
+            - mariadb
+        environment:
+            - PMA_HOST=mariadb
+            - MYSQL_ROOT_PASSWORD
+            #- PMA_PORT=${HOST_PMA_SQL_SERVER_PORT}
+        depends_on:
+            - mariadb
+        networks:
+            - frontend
+            - backend
+        volumes:
+          - ./services/phpmyadmin/etc/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php

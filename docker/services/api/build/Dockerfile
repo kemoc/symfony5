@@ -45,12 +45,15 @@ RUN phpModules=" \
   "
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
+RUN docker-php-ext-install intl
 RUN apt update && \
     apt install -y libxml2-dev
 RUN docker-php-ext-install soap
 
 RUN apt install -y libonig-dev
 RUN docker-php-ext-install mbstring
+
+RUN docker-php-ext-install opcache
 
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
@@ -66,6 +69,11 @@ RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
 ENV TZ=Europe/Warsaw
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+#RUN curl "https://github.com/fabpot/local-php-security-checker/releases/download/v1.0.0/local-php-security-checker_1.0.0_linux_amd64"  --output /usr/local/bin/local-php-security-checker
+RUN wget -O /usr/local/bin/local-php-security-checker "https://github.com/fabpot/local-php-security-checker/releases/download/v1.0.0/local-php-security-checker_1.0.0_linux_amd64"
+RUN chmod a+rx /usr/local/bin/local-php-security-checker
+# local-php-security-checker --path=$PROJECTMAPPINGFOLDER
+
 COPY entrypoint.bash /entrypoint.bash
 RUN chmod a+x /entrypoint.bash
 # https://github.com/docker/docker.github.io/issues/6142
@@ -74,11 +82,6 @@ ENTRYPOINT ["docker-php-entrypoint", "/entrypoint.bash"]
 RUN mkdir $PROJECTMAPPINGFOLDER
 WORKDIR $PROJECTMAPPINGFOLDER
 RUN cd $PROJECTMAPPINGFOLDER
-
-#RUN curl "https://github.com/fabpot/local-php-security-checker/releases/download/v1.0.0/local-php-security-checker_1.0.0_linux_amd64"  --output /usr/local/bin/local-php-security-checker
-RUN wget -O /usr/local/bin/local-php-security-checker "https://github.com/fabpot/local-php-security-checker/releases/download/v1.0.0/local-php-security-checker_1.0.0_linux_amd64"
-RUN chmod a+rx /usr/local/bin/local-php-security-checker
-# local-php-security-checker --path=$PROJECTMAPPINGFOLDER
 
 ENV PATH="$PATH:$PROJECTMAPPINGFOLDER/vendor/bin/:$PROJECTMAPPINGFOLDER/bin/"
 

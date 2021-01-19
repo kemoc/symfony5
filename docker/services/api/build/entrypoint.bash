@@ -34,8 +34,8 @@ if [ -d "$PROJECTMAPPINGFOLDER/var/cache" ]; then
     rm -rf "$PROJECTMAPPINGFOLDER/var/cache/*"
 fi
 
-if [ -d "$PROJECTMAPPINGFOLDER/var/logs" ]; then
-    rm -rf "$PROJECTMAPPINGFOLDER/var/logs/*"
+if [ -d "$PROJECTMAPPINGFOLDER/var/log" ]; then
+    rm -rf "$PROJECTMAPPINGFOLDER/var/log/*"
 fi
 
 chmod -R o=rx "$PROJECTMAPPINGFOLDER"

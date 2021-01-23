@@ -13,7 +13,8 @@ services:
         restart: on-failure
         #tty: true
         ports:
-            - ${HOST_NGINX_PORT}:${NGINX_PORT}
+            - ${HOST_NGINX_API_PORT_DEV}:${NGINX_PORT}
+            - ${HOST_NGINX_API_PORT}:81
         environment:
             - NGINX_HOST
         volumes:

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+{{ message }}
+<br>
+{% if opcacheCleared %}
+    <p>Clear Opcache done.</p>
+    <br>
+{% endif %}
+{% if a %}
+    <p>a = {{ a }}</p>
+{% endif %}
+
+{% if json is defined and json %}
+<div>
+    <h5>Json</h5>
+    <div>
+        {{ json }}
+    </div>
+</div>
+{% endif %}
+
+<a href="{{ path('test_clear_opcache') }}">Clear Opcache</a>
+</body>
+</html>

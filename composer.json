@@ -45,10 +45,10 @@
     "sort-packages": true
   },
   "autoload": {
+    "classmap": ["src/Kernel.php"],
     "psr-4": {
       "Product\\": "src/Product/",
-      "Shared\\": "src/Shared/",
-      "App\\": "src/"
+      "Shared\\": "src/Shared/"
     }
   },
   "autoload-dev": {

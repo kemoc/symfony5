@@ -1,8 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
-
+namespace Shared\Infrastructure\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

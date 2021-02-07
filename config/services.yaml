@@ -20,6 +20,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+            - '../Product/'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -29,3 +30,36 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Product\:
+        resource: '../src/Product/'
+        exclude:
+            - '../src/Product/Infrastructure/DependencyInjection/'
+            - '../src/Product/Domain/Entity/'
+
+    Product\Infrastructure\Controller\:
+        resource: '../src/Product/Infrastructure/Controller/'
+        tags: ['controller.service_arguments']
+
+    Product\Application\CreateProductHandler:
+        public: true
+
+    Shared\:
+        resource: '../src/Shared/'
+
+    Shared\Infrastructure\SynchronousCommandBus:
+        calls:
+            - [
+                    'map',
+                  [
+                          'Product\Application\CreateProductCommand',
+                          '@Product\Application\CreateProductHandler'
+                  ]
+            ]
+            - [
+                    'map',
+                [
+                        'Product\Application\CreateProductCommand',
+                        '@Product\Application\CreateProductHandler'
+                ]
+            ]
